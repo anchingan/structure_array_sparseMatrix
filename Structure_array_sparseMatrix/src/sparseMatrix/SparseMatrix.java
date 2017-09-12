@@ -27,7 +27,7 @@ public class SparseMatrix {
 	}
 	
 	private void delTail() {
-		terms = Arrays.copyOf(terms, terms.length - 1);
+		terms[terms[0].value + 1] = null;
 	}
 	
 	public void create(int[][] arrayInt) {
@@ -69,15 +69,21 @@ public class SparseMatrix {
 	}
 	
 	public SparseMatrix clone() {
-		SparseMatrix result = new SparseMatrix(this.getElement(0).row, this.getElement(0).col);
-		for (int i = 1; i <= this.getElement(0).value; i++)
-			result.add(this.getElement(i).row, this.getElement(i).col, this.getElement(i).value);
+		SparseMatrix result = new SparseMatrix(this.terms[0].row, this.terms[0].col);
+		for (int i = 1; i <= this.terms[0].value; i++)
+			result.add(this.terms[i].row, this.terms[i].col, this.terms[i].value);
 		
 		return result;
 	}
 	
 	public void transpose() {
-		SparseMatrix t = new SparseMatrix(this.getElement(0).row, this.getElement(0).col);
+		SparseMatrix t = new SparseMatrix(this.terms[0].col, this.terms[0].row);
+		for (int i = 0; i <= t.terms[0].row; i++) {
+			for (int j = 1; j <= t.terms[0].value; j++) {
+				if (this.terms[j].col == i)
+					t.add(this.terms[j].col, this.terms[j].row, this.terms[j].value);
+			}
+		}
 		
 	}
 	
@@ -86,8 +92,8 @@ public class SparseMatrix {
 	}
 	
 	public static SparseMatrix add(SparseMatrix matrix1, SparseMatrix matrix2) {
-		int col1 = matrix1.getElement(0).col, row1 = matrix1.getElement(0).row,
-			col2 = matrix2.getElement(0).col, row2 = matrix2.getElement(0).row;
+		int col1 = matrix1.terms[0].col, row1 = matrix1.terms[0].row,
+			col2 = matrix2.terms[0].col, row2 = matrix2.terms[0].row;
 		//Check if column of matrix1 is equal to row of matrix2.
 		if (col1 != col2 || row1 != row2) {
 			System.out.println("These two matrixs can not be added!");
@@ -99,30 +105,30 @@ public class SparseMatrix {
 		//Index of matrix1 and matrix2
 		int iM1 = 1, iM2 = 1;
 		while (true) {
-			if (matrix1.getElement(iM1).row == matrix2.getElement(iM2).row ) {
-				if (matrix1.getElement(iM1).col == matrix2.getElement(iM2).col) {
-					result.add(matrix1.getElement(iM1).row, matrix1.getElement(iM1).col, (matrix1.getElement(iM1).value + matrix2.getElement(iM2).value));
+			if (matrix1.terms[iM1].row == matrix2.terms[iM2].row ) {
+				if (matrix1.terms[iM1].col == matrix2.terms[iM2].col) {
+					result.add(matrix1.terms[iM1].row, matrix1.terms[iM1].col, (matrix1.terms[iM1].value + matrix2.terms[iM2].value));
 					iM1++;
 					iM2++;
 				}
-				else if (matrix1.getElement(iM1).col < matrix2.getElement(iM2).col) {
-					result.add(matrix1.getElement(iM1).row, matrix1.getElement(iM1).col, matrix1.getElement(iM1).value);
+				else if (matrix1.terms[iM1].col < matrix2.terms[iM2].col) {
+					result.add(matrix1.terms[iM1].row, matrix1.terms[iM1].col, matrix1.terms[iM1].value);
 					iM1++;
 				}
-				else if (matrix1.getElement(iM1).col > matrix2.getElement(iM2).col) {
-					result.add(matrix2.getElement(iM2).row, matrix2.getElement(iM2).col, matrix2.getElement(iM2).value);
+				else if (matrix1.terms[iM1].col > matrix2.terms[iM2].col) {
+					result.add(matrix2.terms[iM2].row, matrix2.terms[iM2].col, matrix2.terms[iM2].value);
 					iM2++;
 				}
 			}
-			else if (matrix1.getElement(iM1).row < matrix2.getElement(iM2).row) {
-				result.add(matrix1.getElement(iM1).row, matrix1.getElement(iM1).col, matrix1.getElement(iM1).value);
+			else if (matrix1.terms[iM1].row < matrix2.terms[iM2].row) {
+				result.add(matrix1.terms[iM1].row, matrix1.terms[iM1].col, matrix1.terms[iM1].value);
 				iM1++;
 			}
-			else if (matrix1.getElement(iM1).row > matrix2.getElement(iM2).row) {
-				result.add(matrix2.getElement(iM2).row, matrix2.getElement(iM2).col, matrix2.getElement(iM2).value);
+			else if (matrix1.terms[iM1].row > matrix2.terms[iM2].row) {
+				result.add(matrix2.terms[iM2].row, matrix2.terms[iM2].col, matrix2.terms[iM2].value);
 				iM2++;
 			}
-			if (iM1 == matrix1.getElement(0).value + 1 && iM2 == matrix2.getElement(0).value + 1)
+			if (iM1 == matrix1.terms[0].value + 1 && iM2 == matrix2.terms[0].value + 1)
 				break;
 		}
 		matrix1.delTail();
@@ -131,7 +137,7 @@ public class SparseMatrix {
 	}
 	
 	public static SparseMatrix mult(SparseMatrix matrix1, SparseMatrix matrix2) {
-		int column = matrix1.getElement(0).col, row = matrix2.getElement(0).row;
+		int column = matrix1.terms[0].col, row = matrix2.terms[0].row;
 		//Check if column of matrix1 is equal to row of matrix2.
 		if (column != row) {
 			System.out.println("These two matrixs can not be multiplied!");
