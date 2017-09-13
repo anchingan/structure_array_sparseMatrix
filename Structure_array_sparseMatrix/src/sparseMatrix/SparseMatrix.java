@@ -84,7 +84,8 @@ public class SparseMatrix {
 					t.add(this.terms[j].col, this.terms[j].row, this.terms[j].value);
 			}
 		}
-		
+		t.print();
+		this.terms = t.terms;
 	}
 	
 	public void fastTranspose() {

@@ -16,9 +16,12 @@ public class TestSparseMatrix {
 		test2.print();
 		System.out.println("");
 		
-		SparseMatrix clone = SparseMatrix.add(test1, test2);
-		if (clone != null)
-			clone.print();
+		SparseMatrix clone = test1.clone();
+		clone.print();
+		clone.transpose();
+		clone.print();
+//		if (clone != null)
+//			clone.print();
 		
 
 	}
